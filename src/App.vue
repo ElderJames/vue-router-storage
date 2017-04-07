@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <history-path></history-path>
+
     <img src="./assets/logo.png">
     <h1>level 1</h1>
     <router-view></router-view>
