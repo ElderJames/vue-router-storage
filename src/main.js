@@ -17,6 +17,5 @@ var vm = new Vue({
   components: { App },
 })
 
-
-window.vm = vm;
+window.$vm = vm;
 window.routerhistory = vm.routerhistory;

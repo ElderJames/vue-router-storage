@@ -1,16 +1,17 @@
 /* @flow */
 import Path from './history-path'
 
-
-var historylength = 0;
 var beforeState = 0;
-var isRoot = false;
 var enterPath = '';
 const routerhistory = [];
 
-export default {
+if (localStorage.getItem("history"))
+    routerhistory = JSON.parse(localStorage.getItem("history"))
 
-    install: function (Vue) {
+
+export default {
+    install: function (Vue, option) {
+
         if (this.isInstall) {
             console.log('installed')
             return;
@@ -18,7 +19,7 @@ export default {
         else
             this.isInstall = true;
 
-        Vue.prototype.routerhistory = routerhistory;
+        Vue.prototype.$routerhistory = routerhistory;
         Vue.prototype.beforeState = 0;
 
         Vue.mixin({
@@ -32,72 +33,71 @@ export default {
                     return;
                 }
 
-                vm.$watch("routerhistory", function (val) {
+                vm.$watch('$routerhistory', function (val) {
                     console.log('save history:' + JSON.stringify(val));
                     localStorage.setItem('history', JSON.stringify(val));
                 }, { deep: true })
 
-                if (localStorage.getItem("history"))
-                    routerhistory = JSON.parse(localStorage.getItem("history"))
 
                 //先获得访问vue页面时的路径
                 vm.enterPath = location.pathname;
                 history.replaceState(0, null, '/');
                 //有历史记录
-                if (routerhistory.length > 0) {
+                if (vm.$routerhistory.length > 0) {
                     console.log('resolve routers from localStorage')
-                    for (var idx = 0; idx < routerhistory.length; idx++) {
-                        history.pushState(idx + 1, null, routerhistory[idx]);
+                    for (var idx = 0; idx < vm.$routerhistory.length; idx++) {
+                        history.pushState(idx + 1, null, vm.$routerhistory[idx]);
                     }
                     //进来时的路径与保存的历史记录中的最后一个不相同,追加
-                    if (routerhistory[routerhistory.length - 1] !== enterPath) {
-                        console.log('add enterPath: ' + enterPath);
-                        routerhistory.push(enterPath);
-                        history.pushState(routerhistory.length, null, enterPath);
-                        localStorage.setItem('history', JSON.stringify(routerhistory));
+                    if (vm.$routerhistory[vm.$routerhistory.length - 1] !== vm.enterPath) {
+                        console.log('add enterPath: ' + vm.enterPath);
+                        vm.$routerhistory.push(vm.enterPath);
+                        history.pushState(vm.$routerhistory.length, null, vm.enterPath);
+                        localStorage.setItem('history', JSON.stringify(vm.$routerhistory));
                     }
                 }
                 else if (vm.$route.fullPath !== '' && vm.$route.fullPath !== '/') {
                     console.log('resolve routers from routeMatched')
                     for (var idx = 0; idx < vm.$route.matched.length; idx++) {
                         history.pushState(idx + 1, null, vm.$route.matched[idx].path);
-                        routerhistory.push(vm.$route.matched[idx].path)
-                        localStorage.setItem('history', JSON.stringify(routerhistory));
+                        vm.$routerhistory.push(vm.$route.matched[idx].path)
+                        localStorage.setItem('history', JSON.stringify(vm.$routerhistory));
                     }
                 }
-
-                historylength = history.length;
                 vm.beforeState = history.state;
-
 
                 vm.$router.beforeEach((to, from, next) => {
                     console.log('beforeState:' + vm.beforeState)
                     console.log('currentState:' + history.state)
                     if (to.path == '/' || typeof history.state == 'number' && vm.beforeState > history.state) {
                         console.log('go back')
+                        vm.$emit('goback')
                         //后退
-                        routerhistory.pop();
+                        vm.$routerhistory.pop();
                         next();
                     }
                     else {
                         console.log('go forward')
+                        vm.$emit('goforward')
                         next();
                         //前进
-                        routerhistory.push(to.fullPath);
+                        vm.$routerhistory.push(to.fullPath);
                         if (typeof history.state != 'number')
                             history.replaceState(history.length, null, to.fullPath)
                     }
-                    historylength = history.length;
                     vm.beforeState = history.state;
-                    console.log('save history:' + JSON.stringify(routerhistory));
-                    localStorage.setItem('history', JSON.stringify(routerhistory));
+                    // console.log('save history:' + JSON.stringify(routerhistory));
+                    localStorage.setItem('history', JSON.stringify(vm.$routerhistory));
+
                 })
+
+
+                console.log(vm.$routerhistory);
             },
         })
 
         Vue.component('history-path', Path)
+
     }
 }
-if (window && window.Vue) {
-    window.Vue.use(HistoryStorage)
-}
+
