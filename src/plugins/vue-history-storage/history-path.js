@@ -1,4 +1,14 @@
 export default {
     name: 'history-path',
-    template: '<div>{{$history.routerhistory.join(" -> ")}}</div>',
+    template: '<div>{{path.join(" -> ")}}</div>',
+    data() {
+        return {
+            path: this.$history.routes
+        }
+    },
+    watch: {
+        '$history.routes'(val) {
+            this.path = val;
+        }
+    }
 }
