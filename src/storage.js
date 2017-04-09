@@ -77,7 +77,6 @@ export default {
         if (_localStorage.getItem('history'))
             _history.routes = JSON.parse(_localStorage.getItem('history'));
         return _history.routes.length > 0;
-
     },
     Clear() {
         _localStorage.removeItem('history')

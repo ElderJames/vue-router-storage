@@ -1,8 +1,38 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
+import RouterStorage from 'vue-router-storage'
 
 Vue.use(Router)
+Vue.use(RouterStorage)
+
+Vue.config.productionTip = false
+
+const App = {
+  name: 'App',
+  template: `
+    <div id="app">
+      <h1>Vue Router Storage example</h1>
+      <button @click="clearStore">Clear Store</button>
+      <history-path></history-path>
+      <p>level 1</p>
+      <router-view></router-view>
+    </div>
+  `,
+  methods: {
+    clearStore() {
+      localStorage.removeItem('history');
+      this.$history.routes.splice(0, this.$history.routes.length);
+
+    }
+  }
+}
+
+const Hello = {
+  template: `
+    <router-link to="/level2">
+      Hello Word!
+    </router-link>`
+}
 
 const Level2 = {
   template: '<div>Level2 <router-view></router-view></div>'
@@ -24,13 +54,13 @@ const comp3 = {
   template: '<div><h1>comp3</h1><router-link to="/level2/level3/comp2">To Comp2</router-link></div>'
 }
 
-export default new Router({
+const router = new Router({
   mode: 'history',
-  history: true,
+  base: __dirname,
   routes: [
     {
       path: '/',
-      component: Hello
+      component: Hello,
     },
     {
       path: '/level2',
@@ -61,4 +91,12 @@ export default new Router({
       ]
     }
   ]
+})
+
+/* eslint-disable no-new */
+var vm = new Vue({
+  el: '#app',
+  router,
+  template: '<App/>',
+  components: { App }
 })

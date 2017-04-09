@@ -1,16 +1,28 @@
 {
-  "name": "vue-history-localstorage",
-  "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "ElderJames <shunjiey@hotmail.com>",
-  "private": true,
-  "scripts": {
-    "dev": "node build/dev-server.js",
-    "build": "node build/build.js"
+  "name": "vue-router-storage",
+  "version": "1.0.0-rc.1",
+  "description": "Router storage & resolve solution for Vue.js 2 & vue-router 2",
+  "author": "James Yeang <shunjiey@hotmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ElderJames/vue-router-storage.git"
   },
-  "dependencies": {
-    "vue": "^2.2.2",
-    "vue-router": "^2.2.0"
+  "files": [
+    "src",
+    "dist/*.js",
+    "types/*.d.ts"
+  ],
+  "keywords": [
+    "vue",
+    "router",
+    "routing"
+  ],
+  "scripts": {
+    "dev": "node examples/server.js",
+    "dev:dist": "rollup -wm -c build/dev.config.js",
+    "build": "node build/build.js",
+    "release": "bash build/release.sh"
   },
   "devDependencies": {
     "less": "2.7.2",
@@ -23,6 +35,7 @@
     "babel-preset-env": "^1.2.1",
     "babel-preset-stage-2": "^6.22.0",
     "babel-register": "^6.22.0",
+    "es6-promise": "^4.0.5",
     "chalk": "^1.1.3",
     "connect-history-api-fallback": "^1.3.0",
     "copy-webpack-plugin": "^4.0.1",
@@ -37,18 +50,28 @@
     "http-proxy-middleware": "^0.17.3",
     "webpack-bundle-analyzer": "^2.2.1",
     "semver": "^5.3.0",
+    "express-urlrewrite": "^1.2.0",
     "opn": "^4.0.2",
     "optimize-css-assets-webpack-plugin": "^1.3.0",
     "ora": "^1.1.0",
     "rimraf": "^2.6.0",
     "url-loader": "^0.5.7",
+    "vue": "^2.2.2",
+    "vue-router": "^2.2.0",
     "vue-loader": "^11.1.4",
     "vue-style-loader": "^2.0.0",
     "vue-template-compiler": "^2.2.4",
     "webpack": "^2.2.1",
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.16.1",
-    "webpack-merge": "^2.6.1"
+    "webpack-merge": "^2.6.1",
+    "rollup": "^0.41.4",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-flow-no-whitespace": "^1.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-watch": "^3.2.2"
   },
   "engines": {
     "node": ">= 4.0.0",

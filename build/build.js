@@ -1,35 +1,142 @@
-require('./check-versions')()
+const fs = require('fs')
+const path = require('path')
+const zlib = require('zlib')
+const uglify = require('uglify-js')
+const rollup = require('rollup')
+const buble = require('rollup-plugin-buble')
+const flow = require('rollup-plugin-flow-no-whitespace')
+const cjs = require('rollup-plugin-commonjs')
+const node = require('rollup-plugin-node-resolve')
+const replace = require('rollup-plugin-replace')
+const version = process.env.VERSION || require('../package.json').version
+const banner =
+  `/**
+  * vue-router-storage v${version}
+  * (c) ${new Date().getFullYear()} James Yeang
+  * @license MIT
+  */`
 
-process.env.NODE_ENV = 'production'
+if (!fs.existsSync('dist')) {
+  fs.mkdirSync('dist')
+}
 
-var ora = require('ora')
-var rm = require('rimraf')
-var path = require('path')
-var chalk = require('chalk')
-var webpack = require('webpack')
-var config = require('../config')
-var webpackConfig = require('./webpack.prod.conf')
+const resolve = _path => path.resolve(__dirname, '../', _path)
 
-var spinner = ora('building for production...')
-spinner.start()
+build([
+  // browser dev
+  {
+    dest: resolve('dist/vue-router-storage.js'),
+    format: 'umd',
+    env: 'development'
+  },
+  {
+    dest: resolve('dist/vue-router-storage.min.js'),
+    format: 'umd',
+    env: 'production'
+  },
+  {
+    dest: resolve('dist/vue-router-storage.common.js'),
+    format: 'cjs'
+  },
+  {
+    dest: resolve('dist/vue-router-storage.esm.js'),
+    format: 'es'
+  }
+].map(genConfig))
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
-  if (err) throw err
-  webpack(webpackConfig, function (err, stats) {
-    spinner.stop()
-    if (err) throw err
-    process.stdout.write(stats.toString({
-      colors: true,
-      modules: false,
-      children: false,
-      chunks: false,
-      chunkModules: false
-    }) + '\n\n')
+function build(builds) {
+  let built = 0
+  const total = builds.length
+  const next = () => {
+    buildEntry(builds[built]).then(() => {
+      built++
+      if (built < total) {
+        next()
+      }
+    }).catch(logError)
+  }
 
-    console.log(chalk.cyan('  Build complete.\n'))
-    console.log(chalk.yellow(
-      '  Tip: built files are meant to be served over an HTTP server.\n' +
-      '  Opening index.html over file:// won\'t work.\n'
-    ))
+  next()
+}
+
+function genConfig(opts) {
+  const config = {
+    entry: resolve('src/index.js'),
+    dest: opts.dest,
+    format: opts.format,
+    banner,
+    moduleName: 'VueRouter',
+    plugins: [
+      flow(),
+      node(),
+      cjs(),
+      replace({
+        __VERSION__: version
+      }),
+      buble()
+    ]
+  }
+
+  if (opts.env) {
+    config.plugins.unshift(replace({
+      'process.env.NODE_ENV': JSON.stringify(opts.env)
+    }))
+  }
+
+  return config
+}
+
+function buildEntry(config) {
+  const isProd = /min\.js$/.test(config.dest)
+  return rollup.rollup(config).then(bundle => {
+    const code = bundle.generate(config).code
+    if (isProd) {
+      var minified = (config.banner ? config.banner + '\n' : '') + uglify.minify(code, {
+        fromString: true,
+        output: {
+          screw_ie8: true,
+          ascii_only: true
+        },
+        compress: {
+          pure_funcs: ['makeMap']
+        }
+      }).code
+      return write(config.dest, minified, true)
+    } else {
+      return write(config.dest, code)
+    }
   })
-})
+}
+
+function write(dest, code, zip) {
+  return new Promise((resolve, reject) => {
+    function report(extra) {
+      console.log(blue(path.relative(process.cwd(), dest)) + ' ' + getSize(code) + (extra || ''))
+      resolve()
+    }
+
+    fs.writeFile(dest, code, err => {
+      if (err) return reject(err)
+      if (zip) {
+        zlib.gzip(code, (err, zipped) => {
+          if (err) return reject(err)
+          report(' (gzipped: ' + getSize(zipped) + ')')
+        })
+      } else {
+        report()
+      }
+    })
+  })
+}
+
+function getSize(code) {
+  return (code.length / 1024).toFixed(2) + 'kb'
+}
+
+function logError(e) {
+  console.log(e)
+}
+
+function blue(str) {
+  return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
+}
