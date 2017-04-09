@@ -16,6 +16,34 @@ Vue中使用HTML5 history历史模式时，能通过浏览器进行前进后退�
 
 ![](https://github.com/ElderJames/vue-router-storage/blob/master/screenshot/vue-router-storage-example.gif?raw=true)
 
+## Use Setup
+
+1. 命令行执行npm安装包
+``` bash
+# install vue-router-storage package
+npm install --save vue-router-storage
+
+```
+2. 在入口文件加入以下代码
+```javascript
+import Vue from 'vue'
+import RouterStorage from 'vue-router-storage'
+
+Vue.use(RouterStorage);
+```
+
+3. 在webpack中加入以下配置
+```javascript
+    resolve: {
+        ...
+        alias: {
+            'vue-router-storage': 'vue-router-storage/dist/vue-router-storage.esm.js',
+        }
+    },
+```
+
+尽情享用吧！
+
 ## Build Setup
 
 ``` bash
