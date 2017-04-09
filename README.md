@@ -12,9 +12,9 @@ vue中使用HTML5 history历史模式时，能通过浏览器进行前进后退�
 
 基于LocalStorage存储，在Vue实例创建时，先检查LocalStorage中是否保存这以前的历史记录，如果没有，则把路由路径保存下来，同时通过history.pushState方法，把路由匹配路径注入到浏览器的历史记录中，使浏览器获得回退到上级路由；如果有保存历史记录，则将历史记录注入到浏览器中，使用户重新打开网页时能继续上次的操作。
 
-### 截图：
+### Screenshot
 
-![]()
+![](https://github.com/ElderJames/vue-router-storage/blob/master/screenshot/vue-router-storage-example.gif?raw=true)
 
 ## Build Setup
 
