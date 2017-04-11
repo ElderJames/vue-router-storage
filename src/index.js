@@ -63,14 +63,14 @@ RouterStorage.install = function (Vue, option) {
                 if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
                     _history.routes.push(_history.enterPath);
                     history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
-                    Store.Save();
                 }
+                Store.Save();
             }
             else if (vm.$route.fullPath !== '' && vm.$route.fullPath !== '/') {
                 if (process.env.NODE_ENV == 'development')
                     console.log('resolve routers from routeMatched')
                 for (var idx = 0; idx < vm.$route.matched.length - 1; idx++) {
-                    var path = vm.$route.matched[idx].fullPath || vm.$route.matched[idx].path;
+                    var path = vm.$route.matched[idx].path;
                     history.pushState({ key: genKey() }, '', _history.base + path);
                     _history.routes.push(path);
                 }
@@ -81,24 +81,31 @@ RouterStorage.install = function (Vue, option) {
             _history.beforeState = history.state;
 
             vm.$router.beforeEach((to, from, next) => {
-                // if (process.env.NODE_ENV == 'development') {
-                //     console.log('befaultState:' + JSON.stringify(_history.beforeState));
-                //     console.log('currentState:' + JSON.stringify(history.state));
-                //     console.log('to:' + to.path);
-                // }
+                if (process.env.NODE_ENV == 'development') {
+                    console.log('befaultState:' + JSON.stringify(_history.beforeState));
+                    console.log('currentState:' + JSON.stringify(history.state));
+                    console.log('to:' + to.path);
+                }
                 if (to.path == '/' || history.state && _history.beforeState && history.state.key && Number(_history.beforeState.key) > Number(history.state.key)) {
                     if (to.path == '/__root' && history.state.key === -1) {
                         if (process.env.NODE_ENV == 'development')
                             console.log('Is root,can\'t back!')
                         next(false);
+                        _history.beforeState = { key: genKey() }
+                        for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                            // console.log('add url:' + _history.base + _history.forwardRoutes[idx])
+                            history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
+                        }
+                        history.go(-1 * _history.forwardRoutes.length)
                     } else {
-
                         if (process.env.NODE_ENV == 'development')
                             console.log('go back')
                         vm.$emit('goback')
                         //后退
-                        _history.routes.pop();
+                        if (_history.routes.length > 0)
+                            _history.forwardRoutes.push(_history.routes.pop());
                         next();
+                        _history.beforeState = history.state;
                     }
                 }
                 else {
@@ -107,9 +114,12 @@ RouterStorage.install = function (Vue, option) {
                     vm.$emit('goforward')
                     //前进
                     _history.routes.push(to.fullPath);
+                    _history.forwardRoutes = [];
                     next();
+                    _history.beforeState = history.state;
                 }
-                _history.beforeState = history.state;
+                console.log(_history.forwardRoutes)
+
                 Store.Save()
             })
         }
