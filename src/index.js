@@ -49,36 +49,36 @@ RouterStorage.install = function (Vue, option) {
             if (_history.enterPath == '/') {
                 Store.Clear();
             }
-            else {
+            if (_history.base != '') {
                 //在根路径前多加一个记录，防止退后时跳出Vue，无法再执行判断和禁止后退操作
                 history.replaceState({ key: -1 }, '', _history.base + '/__root');
                 history.pushState({ key: genKey() }, '', _history.base + '/');
-                //有历史记录
-                if (_history.routes.length > 0) {
-                    for (var idx = 0; idx < _history.routes.length; idx++) {
-                        history.pushState({ key: genKey() }, '', _history.base + _history.routes[idx]);
-                    }
-                    //进来时的路径与保存的历史记录中的最后一个不相同,追加
-                    if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
-                        _history.routes.push(_history.enterPath);
-                        history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
-                        Store.Save();
-                    }
+            }
+            //有历史记录
+            if (_history.routes.length > 0) {
+                for (var idx = 0; idx < _history.routes.length; idx++) {
+                    history.pushState({ key: genKey() }, '', _history.base + _history.routes[idx]);
                 }
-                else if (vm.$route.fullPath !== '' && vm.$route.fullPath !== '/') {
-                    if (process.env.NODE_ENV == 'development')
-                        console.log('resolve routers from routeMatched')
-                    for (var idx = 0; idx < vm.$route.matched.length - 1; idx++) {
-                        var path = vm.$route.matched[idx].fullPath || vm.$route.matched[idx].path;
-                        history.pushState({ key: genKey() }, '', _history.base + path);
-                        _history.routes.push(path);
-                    }
-                    history.pushState({ key: genKey() }, '', _history.base + vm.$route.fullPath);
-                    _history.routes.push(vm.$route.fullPath);
+                //进来时的路径与保存的历史记录中的最后一个不相同,追加
+                if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
+                    _history.routes.push(_history.enterPath);
+                    history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
                     Store.Save();
                 }
-                _history.beforeState = history.state;
             }
+            else if (vm.$route.fullPath !== '' && vm.$route.fullPath !== '/') {
+                if (process.env.NODE_ENV == 'development')
+                    console.log('resolve routers from routeMatched')
+                for (var idx = 0; idx < vm.$route.matched.length - 1; idx++) {
+                    var path = vm.$route.matched[idx].fullPath || vm.$route.matched[idx].path;
+                    history.pushState({ key: genKey() }, '', _history.base + path);
+                    _history.routes.push(path);
+                }
+                history.pushState({ key: genKey() }, '', _history.base + vm.$route.fullPath);
+                _history.routes.push(vm.$route.fullPath);
+                Store.Save();
+            }
+            _history.beforeState = history.state;
 
             vm.$router.beforeEach((to, from, next) => {
                 // if (process.env.NODE_ENV == 'development') {
@@ -105,9 +105,9 @@ RouterStorage.install = function (Vue, option) {
                     if (process.env.NODE_ENV == 'development')
                         console.log('go forward')
                     vm.$emit('goforward')
-                    next();
                     //前进
                     _history.routes.push(to.fullPath);
+                    next();
                 }
                 _history.beforeState = history.state;
                 Store.Save()
