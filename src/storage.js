@@ -71,16 +71,25 @@ import { _history } from './history'
 export default {
     Save() {
         _localStorage.setItem('history', JSON.stringify(_history.routes))
-        return _localStorage.getItem('history') != null;
+        var result = _localStorage.getItem('history') != null;
+        if (result && process.env.NODE_ENV == 'development')
+            console.log('Save routers with localStorage');
+        return result;
     },
     Resolve() {
         if (_localStorage.getItem('history'))
             _history.routes = JSON.parse(_localStorage.getItem('history'));
-        return _history.routes.length > 0;
+        var result = _history.routes.length > 0;
+        if (result && process.env.NODE_ENV == 'development')
+            console.log('Resolve routers from localStorage');
+        return result;
     },
     Clear() {
         _localStorage.removeItem('history')
         _history.routes = []
-        return _localStorage.getItem('history') && _history.routes.length == 0;
+        var result = _localStorage.getItem('history') && _history.routes.length == 0;
+        if (result && process.env.NODE_ENV == 'development')
+            console.log('Clear routers from localStorage');
+        return result;
     }
 }

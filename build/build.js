@@ -98,7 +98,9 @@ function buildEntry(config) {
           ascii_only: true
         },
         compress: {
-          pure_funcs: ['makeMap']
+          pure_funcs: ['makeMap'],
+          drop_debugger: true,
+          drop_console: true
         }
       }).code
       return write(config.dest, minified, true)
