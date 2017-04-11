@@ -50,6 +50,7 @@ RouterStorage.install = function (Vue, option) {
                 Store.Clear();
             }
             else {
+                //在根路径前多加一个记录，防止退后时跳出Vue，无法再执行判断和禁止后退操作
                 history.replaceState({ key: -1 }, '', _history.base + '/root');
                 history.pushState({ key: genKey() }, '', _history.base);
                 //有历史记录
@@ -81,11 +82,11 @@ RouterStorage.install = function (Vue, option) {
             }
 
             vm.$router.beforeEach((to, from, next) => {
-                if (process.env.NODE_ENV == 'development') {
-                    console.log('befaultState:' + JSON.stringify(_history.beforeState));
-                    console.log('currentState:' + JSON.stringify(history.state));
-                    console.log('to:' + to.path);
-                }
+                // if (process.env.NODE_ENV == 'development') {
+                //     console.log('befaultState:' + JSON.stringify(_history.beforeState));
+                //     console.log('currentState:' + JSON.stringify(history.state));
+                //     console.log('to:' + to.path);
+                // }
                 if (to.path == '/' || history.state && _history.beforeState && history.state.key && Number(_history.beforeState.key) > Number(history.state.key)) {
                     if (history.state.key == -1) {
                         if (process.env.NODE_ENV == 'development')
@@ -108,8 +109,6 @@ RouterStorage.install = function (Vue, option) {
                     next();
                     //前进
                     _history.routes.push(to.fullPath);
-                    // if (typeof history.state != 'number')
-                    //     history.replaceState({ key: genKey() }, '', to.fullPath)
                 }
                 _history.beforeState = history.state;
                 Store.Save()
