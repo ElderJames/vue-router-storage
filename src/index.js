@@ -43,7 +43,7 @@ RouterStorage.install = function (Vue, option) {
 
             //先获得访问vue页面时的路径
             _history.enterPath = vm.$route.fullPath;
-            _history.base = '/' + vm.$router.options.base;
+            _history.base = vm.$router.options.base ? '/' + vm.$router.options.base : '';
             if (process.env.NODE_ENV == 'development')
                 console.log('EnterPath:' + _history.enterPath)
             if (_history.enterPath == '/') {
@@ -51,8 +51,8 @@ RouterStorage.install = function (Vue, option) {
             }
             else {
                 //在根路径前多加一个记录，防止退后时跳出Vue，无法再执行判断和禁止后退操作
-                history.replaceState({ key: -1 }, '', _history.base + '/root');
-                history.pushState({ key: genKey() }, '', _history.base);
+                history.replaceState({ key: -1 }, '', _history.base + '/__root');
+                history.pushState({ key: genKey() }, '', _history.base + '/');
                 //有历史记录
                 if (_history.routes.length > 0) {
                     for (var idx = 0; idx < _history.routes.length; idx++) {
@@ -60,10 +60,9 @@ RouterStorage.install = function (Vue, option) {
                     }
                     //进来时的路径与保存的历史记录中的最后一个不相同,追加
                     if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
-
                         _history.routes.push(_history.enterPath);
                         history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
-                        Store.Save()
+                        Store.Save();
                     }
                 }
                 else if (vm.$route.fullPath !== '' && vm.$route.fullPath !== '/') {
@@ -88,7 +87,7 @@ RouterStorage.install = function (Vue, option) {
                 //     console.log('to:' + to.path);
                 // }
                 if (to.path == '/' || history.state && _history.beforeState && history.state.key && Number(_history.beforeState.key) > Number(history.state.key)) {
-                    if (history.state.key == -1) {
+                    if (to.path == '/__root' && history.state.key === -1) {
                         if (process.env.NODE_ENV == 'development')
                             console.log('Is root,can\'t back!')
                         next(false);
