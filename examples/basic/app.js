@@ -100,3 +100,7 @@ var vm = new Vue({
   template: '<App/>',
   components: { App }
 })
+
+vm.$on('goback', function () {
+  console.log('goback event')
+})
