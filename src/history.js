@@ -3,7 +3,8 @@ export let _history = {
     forwardRoutes: [],
     enterPath: '',
     base: '',
-    beforeState: 0
+    beforeState: 0,
+    length: 0
 }
 
 export default {}

@@ -43,15 +43,15 @@ const Level3 = {
 }
 
 const comp1 = {
-  template: '<div><h1>comp1</h1><router-link to="/level2/level3/comp2">To Comp2</router-link></div>'
+  template: '<div><h1>comp1</h1><router-link to="/level2/level3/comp2">To Comp2</router-link><br/><router-link to="/level2/level3/comp2" replace>Replace To Comp2</router-link></div>'
 }
 
 const comp2 = {
-  template: '<div><h1>comp2</h1><router-link to="/level2/level3/comp3">To Comp3</router-link></div>'
+  template: '<div><h1>comp2</h1><router-link to="/level2/level3/comp3">To Comp3</router-link><br/><router-link to="/level2/level3/comp3" replace>Replace To Comp3</router-link></div>'
 }
 
 const comp3 = {
-  template: '<div><h1>comp3</h1><router-link to="/level2/level3/comp2">To Comp2</router-link></div>'
+  template: '<div><h1>comp3</h1><router-link to="/level2/level3/comp2">To Comp2</router-link><br/><router-link to="/level2/level3/comp2" replace>Replace To Comp2</router-link></div>'
 }
 
 const router = new Router({
