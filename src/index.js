@@ -83,31 +83,32 @@ RouterStorage.install = function (Vue, option) {
             _history.length = history.length;
 
             vm.$router.beforeEach((to, from, next) => {
-                if (process.env.NODE_ENV == 'development') {
-                    console.log('befaultState:' + JSON.stringify(_history.beforeState));
-                    console.log('currentState:' + JSON.stringify(history.state));
-                    console.log('to:' + to.path);
-                }
-
-                if (to.path == '/'
-                    || history.state
-                    && _history.beforeState
-                    && history.state.key
-                    && Number(_history.beforeState.key) > Number(history.state.key)) {
-                    //在Vue根目录再后退的处理
-                    if (to.path == '/__root' && history.state.key === -1) {
-                        if (process.env.NODE_ENV == 'development')
-                            console.log('Is root,can\'t back!')
-                        next(false);
-
-                        _history.beforeState = { key: genKey() }
-                        for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                            history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                        }
-                        history.go(-1 * _history.forwardRoutes.length)
+                //在Vue根目录再后退的处理
+                if (to.path == '/__root' && history.state && history.state.key === -1) {
+                    if (process.env.NODE_ENV == 'development')
+                        console.log('Is root,can\'t back!')
+                    
+                    next(false);
+                    _history.beforeState = { key: genKey() }
+                    for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                        history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
                     }
-                    //普通后退处理
-                    else {
+                    history.go(-1 * _history.forwardRoutes.length)
+                }
+                else {
+                    next();
+
+                    if (process.env.NODE_ENV == 'development') {
+                        console.log('befaultState:' + JSON.stringify(_history.beforeState));
+                        console.log('currentState:' + JSON.stringify(history.state));
+                    }
+                    if (to.path == '/'
+                        || history.state
+                        && _history.beforeState
+                        && history.state.key
+                        && Number(_history.beforeState.key) > Number(history.state.key)) {
+
+                        //普通后退处理
                         if (process.env.NODE_ENV == 'development')
                             console.log('go back')
                         vm.$emit('goback')
@@ -115,37 +116,29 @@ RouterStorage.install = function (Vue, option) {
                         if (_history.routes.length > 0)
                             _history.forwardRoutes.push(_history.routes.pop());
                         console.log(_history.forwardRoutes)
-                        next();
-
-                        _history.beforeState = history.state;
                     }
-                }
-                else {
-                    next();
-                    //replace处理
-                    if (_history.beforeState.key == history.state.key) {
-                        vm.$emit('replace')
-                        if (process.env.NODE_ENV == 'development')
-                            console.log('router replace :' + to.fullPath)
-                        _history.routes.pop();
-                        _history.routes.push(to.fullPath);
-
-                        //_history.beforeState = history.state;
-                        //   next();
-                    }
-                    //普通前进处理
                     else {
-                        if (process.env.NODE_ENV == 'development')
-                            console.log('go forward')
-                        vm.$emit('goforward')
-                        //前进
-                        _history.routes.push(to.fullPath);
-                        _history.forwardRoutes = [];
-
-                        _history.beforeState = history.state;
+                        //replace处理
+                        if (_history.beforeState.key == history.state.key) {
+                            vm.$emit('replace')
+                            if (process.env.NODE_ENV == 'development')
+                                console.log('router replace :' + to.fullPath)
+                            _history.routes.pop();
+                            _history.routes.push(to.fullPath);
+                        }
+                        //普通前进处理
+                        else {
+                            if (process.env.NODE_ENV == 'development')
+                                console.log('go forward')
+                            vm.$emit('goforward')
+                            //前进
+                            _history.routes.push(to.fullPath);
+                            _history.forwardRoutes = [];
+                        }
                     }
-                }
 
+                    _history.beforeState = history.state;
+                }
                 Store.Save()
             })
         }
