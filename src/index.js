@@ -41,15 +41,18 @@ RouterStorage.install = function (Vue, option) {
                 return;
             }
 
-            //先获得访问vue页面时的路径
-            _history.enterPath = vm.$route.fullPath;
+            //获取基路径            
             _history.base = vm.$router.options.base ? '/' + vm.$router.options.base : '';
+            //先获得访问vue页面时的路径
+            _history.enterPath = location.pathname.replace(_history.base, '')
+            if (process.env.NODE_ENV == 'development')
+                console.log('[router-storage]:enterPath：' + _history.enterPath + ' base:' + _history.base)
             if (_history.enterPath == '/') {
                 localStorage.Clear();
             }
 
             //刷新时，在根路径前多加一个记录，防止退后时跳出Vue，无法再执行判断和禁止后退操作
-            if (history.length != 0) {
+            if (history.length > 1) {
                 history.replaceState({ key: -1 }, '', _history.base + '/__root');
                 history.pushState({ key: genKey() }, '', _history.base + '/');
             }
@@ -65,7 +68,7 @@ RouterStorage.install = function (Vue, option) {
                 }
                 localStorage.Save();
             }
-            else if (vm.$route.fullPath !== '' && vm.$route.fullPath !== '/') {
+            else if (_history.enterPath !== '' && _history.enterPath !== '/') {
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:resolve routers from routeMatched')
                 for (var idx = 0; idx < vm.$route.matched.length - 1; idx++) {
@@ -73,13 +76,13 @@ RouterStorage.install = function (Vue, option) {
                     history.pushState({ key: genKey() }, '', _history.base + path);
                     _history.routes.push(path);
                 }
-                history.pushState({ key: genKey() }, '', _history.base + vm.$route.fullPath);
-                _history.routes.push(vm.$route.fullPath);
+                history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
+                _history.routes.push(_history.enterPath);
                 localStorage.Save();
             }
             _history.beforeState = history.state;
             _history.length = history.length;
-            
+
             //用于标记是否已经被路由处理过，路由处理过popstate事件就不再处理了
             var _routeActived = false;
             //用于标记是否已到达Vue根路径，到达就不再后退了

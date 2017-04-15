@@ -89,6 +89,10 @@ const router = new Router({
           ]
         }
       ]
+    },
+    {
+      path: '/comp3',
+      component: comp3,
     }
   ]
 })
