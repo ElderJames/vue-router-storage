@@ -91,18 +91,18 @@ RouterStorage.install = function (Vue, option) {
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                // var dedup = false;
-                // while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
-                //     dedup = true;
-                //     console.log('removed:' + _history.routes.pop());
-                //     history.go(-1);
-                // }
-                // if (dedup) {
-                //     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                //         history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                //     }
-                //     history.go(-1 * _history.forwardRoutes.length + 2)
-                // }
+                var dedup = false;
+                while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
+                    dedup = true;
+                    console.log('removed:' + _history.routes.pop());
+                    history.go(-1);
+                }
+                if (dedup) {
+                    for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                        history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
+                    }
+                    history.go(-1 * _history.forwardRoutes.length + 2)
+                }
 
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go back')
