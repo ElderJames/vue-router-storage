@@ -1,6 +1,6 @@
 {
   "name": "vue-router-storage",
-  "version": "1.0.0-rc.4.2",
+  "version": "1.0.0-rc.4.3",
   "description": "Router storage & resolve solution for Vue.js 2 & vue-router 2",
   "author": "James Yeang <shunjiey@hotmail.com>",
   "license": "MIT",

@@ -153,8 +153,8 @@ RouterStorage.install = function (Vue, option) {
                         }
                     }
                     _history.beforeState = history.state;
+                    localStorage.Save()
                 }
-                localStorage.Save()
             })
 
 
@@ -164,12 +164,12 @@ RouterStorage.install = function (Vue, option) {
                     return;
                 }
                 if (!_isRoot) {
-                    if (Number(_history.beforeState.key) > Number(e.state.key)) {
+                    if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
                         if (process.env.NODE_ENV == 'development')
                             console.log('[router-storage]:additional go back');
                         goBack();
                     }
-                    else if (Number(_history.beforeState.key) < Number(e.state.key)) {
+                    else if (Number(_history.beforeState.key) != Number(e.state.key)) {
                         if (process.env.NODE_ENV == 'development')
                             console.log('[router-storage]:additional go forward');
                         goForward();
