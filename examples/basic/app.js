@@ -101,6 +101,18 @@ var vm = new Vue({
   components: { App }
 })
 
-vm.$on('goback', function () {
+vm.$on('history.goback', function () {
   console.log('goback event')
+})
+
+vm.$on('history.replace', function () {
+  console.log('replace event')
+})
+
+vm.$on('history.goforward', function () {
+  console.log('goforward event')
+})
+
+vm.$on('history.inroot', function () {
+  console.log('inroot event')
 })

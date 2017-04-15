@@ -2,6 +2,8 @@
 let _localStorage = localStorage;
 //检测浏览器是否支持localStorage
 if (typeof _localStorage == 'undefined') {
+    if (process.env.NODE_ENV == 'development')
+        console.info('[router-storage]:because your browser dosen\'t surpport localstorage,router-storage will use cookie right here.')
     //创建localStorage
     var localStorageClass = function () {
         this.options = {
@@ -72,24 +74,24 @@ export default {
     Save() {
         _localStorage.setItem('history', JSON.stringify(_history.routes))
         var result = _localStorage.getItem('history') != null;
-        // if (result && process.env.NODE_ENV == 'development')
-        //     console.log('Save routers with localStorage');
+        if (result && process.env.NODE_ENV == 'development')
+            console.log('[router-storage]:save routes by localStorage');
         return result;
     },
     Resolve() {
         if (_localStorage.getItem('history'))
             _history.routes = JSON.parse(_localStorage.getItem('history'));
         var result = _history.routes.length > 0;
-        // if (result && process.env.NODE_ENV == 'development')
-        //     console.log('Resolve routers from localStorage');
+        if (result && process.env.NODE_ENV == 'development')
+            console.log('[router-storage]:resolve routes from localStorage');
         return result;
     },
     Clear() {
         _localStorage.removeItem('history')
         _history.routes = []
         var result = _localStorage.getItem('history') && _history.routes.length == 0;
-        // if (result && process.env.NODE_ENV == 'development')
-        //     console.log('Clear routers from localStorage');
+        if (result && process.env.NODE_ENV == 'development')
+            console.log('[router-storage]:clear routes from localStorage');
         return result;
     }
 }
