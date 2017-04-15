@@ -44,7 +44,7 @@ RouterStorage.install = function (Vue, option) {
             //获取基路径            
             _history.base = vm.$router.options.base ? '/' + vm.$router.options.base : '';
             //先获得访问vue页面时的路径
-            _history.enterPath = location.pathname.replace(_history.base, '')
+            _history.enterPath = location.pathname.replace(_history.base, '') + location.search;
             if (process.env.NODE_ENV == 'development')
                 console.log('[router-storage]:enterPath：' + _history.enterPath + ' base:' + _history.base)
             if (_history.enterPath == '/') {
@@ -61,6 +61,7 @@ RouterStorage.install = function (Vue, option) {
                 for (var idx = 0; idx < _history.routes.length; idx++) {
                     history.pushState({ key: genKey() }, '', _history.base + _history.routes[idx]);
                 }
+
                 //进来时的路径与保存的历史记录中的最后一个不相同,追加
                 if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
                     _history.routes.push(_history.enterPath);
@@ -90,7 +91,19 @@ RouterStorage.install = function (Vue, option) {
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                //普通后退处理
+                // var dedup = false;
+                // while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
+                //     dedup = true;
+                //     console.log('removed:' + _history.routes.pop());
+                //     history.go(-1);
+                // }
+                // if (dedup) {
+                //     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                //         history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
+                //     }
+                //     history.go(-1 * _history.forwardRoutes.length + 2)
+                // }
+
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go back')
                 vm.$emit('history.goback')
@@ -140,6 +153,7 @@ RouterStorage.install = function (Vue, option) {
                         && _history.beforeState
                         && history.state.key
                         && Number(_history.beforeState.key) > Number(history.state.key)) {
+                        //普通后退处理
                         goBack();
                     }
                     else {
