@@ -88,28 +88,58 @@ RouterStorage.install = function (Vue, option) {
             var _routeActived = false;
             //用于标记是否已到达Vue根路径，到达就不再后退了
             var _isRoot = false;
+            //去重时的重复数
+            var repeatCount = 0;
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                var dedup = false;
-                while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
-                    dedup = true;
-                    console.log('removed:' + _history.routes.pop());
-                    history.go(-1);
-                }
-                if (dedup) {
-                    for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                        history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                    }
-                    history.go(-1 * _history.forwardRoutes.length + 2)
-                }
+
+                if (_history.routes.length > 0)
+                    _history.forwardRoutes.push(_history.routes.pop());
+                console.log(_history.forwardRoutes);
 
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go back')
                 vm.$emit('history.goback')
+
                 //后退
-                if (_history.routes.length > 0)
-                    _history.forwardRoutes.push(_history.routes.pop());
+                for (var i = _history.routes.length - 1; i >= 0; i--) {
+                    if (vm.$route.fullPath == _history.routes[i]) {
+                        repeatCount++;
+                        _history.routes.pop();
+                    }
+                    else break;
+                }
+
+                if (repeatCount > 0) {
+                    _history.routes.push(vm.$route.fullPath);
+
+                    console.log("重复数：" + (repeatCount + 1))
+                    history.go(-1 * repeatCount + 1);
+                    // _history.beforeState = { key: genKey() }
+                    // for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                    //     history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
+                    // }
+
+                    // history.go(-1 * _history.forwardRoutes.length)
+
+                    // repeatCount = 0;
+                }
+
+                // var dedup = false;
+                // while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
+                //     dedup = true;
+                //     console.log('removed:' + _history.routes.pop());
+                //     history.go(-1);
+                // }
+                // if (dedup) {
+                //     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                //         history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
+                //     }
+                //     history.go(-1 * _history.forwardRoutes.length + 2)
+                // }
+
+
             }
 
             let replace = () => {
@@ -130,7 +160,6 @@ RouterStorage.install = function (Vue, option) {
             }
 
             vm.$router.beforeEach((to, from, next) => {
-                _routeActived = true;
                 _isRoot = false;
                 //在Vue根目录再后退的处理
                 if (to.path == '/__root' && history.state && history.state.key === -1) {
@@ -177,7 +206,7 @@ RouterStorage.install = function (Vue, option) {
                     _routeActived = false;
                     return;
                 }
-                if (!_isRoot) {
+                if (!_isRoot && repeatCount == 0) {
                     if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
                         if (process.env.NODE_ENV == 'development')
                             console.log('[router-storage]:additional go back');
