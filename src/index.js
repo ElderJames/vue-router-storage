@@ -103,7 +103,7 @@ RouterStorage.install = function (Vue, option) {
                 vm.$emit('history.goback')
 
                 //后退
-                for (var i = _history.routes.length - 1; i >= 0; i--) {
+                for (var i = _history.routes.length - 2; i >= 0; i--) {
                     if (vm.$route.fullPath == _history.routes[i]) {
                         repeatCount++;
                         _history.routes.pop();
@@ -112,34 +112,18 @@ RouterStorage.install = function (Vue, option) {
                 }
 
                 if (repeatCount > 0) {
-                    _history.routes.push(vm.$route.fullPath);
+                    console.log("重复数：" + repeatCount)
+                    history.go(-1 * repeatCount);
+                    _history.beforeState = history.state.key;
 
-                    console.log("重复数：" + (repeatCount + 1))
-                    history.go(-1 * repeatCount + 1);
-                    // _history.beforeState = { key: genKey() }
-                    // for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                    //     history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                    // }
+                    for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
+                        history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
+                    }
 
-                    // history.go(-1 * _history.forwardRoutes.length)
+                    history.go(-1 * _history.forwardRoutes.length)
 
-                    // repeatCount = 0;
+                    repeatCount = 0;
                 }
-
-                // var dedup = false;
-                // while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
-                //     dedup = true;
-                //     console.log('removed:' + _history.routes.pop());
-                //     history.go(-1);
-                // }
-                // if (dedup) {
-                //     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                //         history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                //     }
-                //     history.go(-1 * _history.forwardRoutes.length + 2)
-                // }
-
-
             }
 
             let replace = () => {
@@ -160,7 +144,9 @@ RouterStorage.install = function (Vue, option) {
             }
 
             vm.$router.beforeEach((to, from, next) => {
+                _routeActived = true;
                 _isRoot = false;
+
                 //在Vue根目录再后退的处理
                 if (to.path == '/__root' && history.state && history.state.key === -1) {
                     if (process.env.NODE_ENV == 'development')
@@ -187,7 +173,7 @@ RouterStorage.install = function (Vue, option) {
                     }
                     else {
                         //replace处理
-                        if (_history.beforeState.key == history.state.key) {
+                        if (_history.beforeState && history.state && _history.beforeState.key == history.state.key) {
                             replace();
                         }
                         //普通前进处理
@@ -223,9 +209,9 @@ RouterStorage.install = function (Vue, option) {
             }
 
             //路由调用完后初始化_routeActived
-            vm.$router.afterEach(route => {
-                _routeActived = false;
-            })
+            // vm.$router.afterEach(route => {
+            //     _routeActived = false;
+            // })
         }
     })
 
