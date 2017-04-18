@@ -91,42 +91,32 @@ RouterStorage.install = function (Vue, option) {
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                var dedup = false;
-                while (_history.routes.length > 1 && _history.routes[_history.routes.length - 2] == vm.$route.fullPath) {
-                    dedup = true;
-                    console.log('removed:' + _history.routes.pop());
-                    history.go(-1);
-                }
-                if (dedup) {
-                    for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                        history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                    }
-                    history.go(-1 * _history.forwardRoutes.length + 2)
-                }
-
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go back')
-                vm.$emit('history.goback')
                 //后退
                 if (_history.routes.length > 0)
                     _history.forwardRoutes.push(_history.routes.pop());
+
+                vm.$emit('history.goback')
             }
 
             let replace = () => {
-                vm.$emit('history.replace')
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:router replace :' + vm.$route.fullPath)
                 _history.routes.pop();
                 _history.routes.push(vm.$route.fullPath);
+
+                vm.$emit('history.replace')
             }
 
             let goForward = () => {
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go forward')
-                vm.$emit('history.goforward')
                 //前进
                 _history.routes.push(vm.$route.fullPath);
                 _history.forwardRoutes = [];
+
+                vm.$emit('history.goforward')
             }
 
             vm.$router.beforeEach((to, from, next) => {
@@ -178,15 +168,17 @@ RouterStorage.install = function (Vue, option) {
                     return;
                 }
                 if (!_isRoot) {
-                    if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
-                        if (process.env.NODE_ENV == 'development')
-                            console.log('[router-storage]:additional go back');
-                        goBack();
-                    }
-                    else if (Number(_history.beforeState.key) != Number(e.state.key)) {
-                        if (process.env.NODE_ENV == 'development')
-                            console.log('[router-storage]:additional go forward');
-                        goForward();
+                    if (_history.beforeState && e.state) {
+                        if (Number(_history.beforeState.key) > Number(e.state.key)) {
+                            if (process.env.NODE_ENV == 'development')
+                                console.log('[router-storage]:additional go back');
+                            goBack();
+                        }
+                        else if (Number(_history.beforeState.key) != Number(e.state.key)) {
+                            if (process.env.NODE_ENV == 'development')
+                                console.log('[router-storage]:additional go forward');
+                            goForward();
+                        }
                     }
                     _history.beforeState = history.state;
                     localStorage.Save()
