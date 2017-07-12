@@ -161,8 +161,9 @@ RouterStorage.install = function (Vue, option) {
                 }
             })
 
-
+            //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
             window.onpopstate = function (e) {
+                //如果路由处理过，则不再执行
                 if (_routeActived) {
                     _routeActived = false;
                     return;
