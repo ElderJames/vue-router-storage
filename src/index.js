@@ -127,20 +127,22 @@ RouterStorage.install = function (Vue, option) {
             }
 
             let replace = () => {
-                vm.$emit('history.replace')
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:router replace :' + vm.$route.fullPath)
                 _history.routes.pop();
                 _history.routes.push(vm.$route.fullPath);
+
+                vm.$emit('history.replace')
             }
 
             let goForward = () => {
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go forward')
-                vm.$emit('history.goforward')
                 //前进
                 _history.routes.push(vm.$route.fullPath);
                 _history.forwardRoutes = [];
+
+                vm.$emit('history.goforward')
             }
 
             vm.$router.beforeEach((to, from, next) => {
@@ -186,12 +188,14 @@ RouterStorage.install = function (Vue, option) {
                 }
             })
 
-
+            //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
             window.onpopstate = function (e) {
+                //如果路由处理过，则不再执行
                 if (_routeActived) {
                     _routeActived = false;
                     return;
                 }
+
                 if (!_isRoot && repeatCount == 0) {
                     if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
                         if (process.env.NODE_ENV == 'development')
