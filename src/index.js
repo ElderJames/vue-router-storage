@@ -88,15 +88,11 @@ RouterStorage.install = function (Vue, option) {
             var _routeActived = false;
             //用于标记是否已到达Vue根路径，到达就不再后退了
             var _isRoot = false;
-            //去重时的重复数
-            var repeatCount = 0;
-
+            //有重复的标记
             var findRepeat = false;
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                // if (repeatCount > 0)
-                //     return;
                 if (findRepeat)
                     return;
 
@@ -109,60 +105,29 @@ RouterStorage.install = function (Vue, option) {
                     console.log('[router-storage]:go back')
 
                 vm.$emit('history.goback')
-
-                //后退
-                // for (var i = _history.routes.length - 2; i >= 0; i--) {
-                //     if (vm.$route.fullPath == _history.routes[i]) {
-                //         repeatCount++;
-                //         // _history.routes.pop();
-                //     }
-                //     else
-                //         break;
-                // }
-
-                // if (repeatCount > 0) {
-                //     console.log("重复数：" + repeatCount)
-                //     history.go(-1 * repeatCount + 1);
-                //     _history.beforeState = history.state.key;
-
-                //     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
-                //         history.pushState({ key: genKey() }, '', _history.base + _history.forwardRoutes[idx])
-                //     }
-
-                //     history.go(-1 * _history.forwardRoutes.length)
-
-                //     repeatCount = 0;
-                // }
             }
 
             let replace = () => {
                 if (findRepeat)
                     return;
 
-                if (process.env.NODE_ENV == 'development')
-                    console.log('[router-storage]:router replace :' + vm.$route.fullPath)
 
-                _history.routes.pop();
-                _history.routes.push(vm.$route.fullPath);
-
-                vm.$emit('history.replace')
-
-                //检查replace中是否有
-                for (var i = _history.routes.length - 2; i >= 0; i--) {
-                    if (vm.$route.fullPath == _history.routes[i]) {
-                        findRepeat = true;
-                        break;
-                    }
-                    else
-                        break;
-                }
-
-                if (findRepeat) {
-                    _history.routes.pop();
+                //检查当前路径是否与上一个路径相同，相同则去重
+                if (vm.$route.fullPath == _history.routes[_history.routes.length - 2]) {
+                    findRepeat = true;
                     history.go(-1);
-                    //   history.pushState({ key: genKey() }, '', _history.base + vm.$route.fullPath);
-
+                    _history.routes.pop();
                     findRepeat = false;
+                }
+                else {
+
+                    if (process.env.NODE_ENV == 'development')
+                        console.log('[router-storage]:router replace :' + vm.$route.fullPath)
+
+                    _history.routes.pop();
+                    _history.routes.push(vm.$route.fullPath);
+
+                    vm.$emit('history.replace')
                 }
             }
 
@@ -225,7 +190,7 @@ RouterStorage.install = function (Vue, option) {
             //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
             window.onpopstate = function (e) {
 
-                console.log('onpopstate')
+                console.log('onpopstate', e)
 
                 //如果路由处理过，则不再执行
                 if (_routeActived) {
@@ -233,7 +198,7 @@ RouterStorage.install = function (Vue, option) {
                     return;
                 }
 
-                if (!_isRoot && repeatCount == 0) {
+                if (!_isRoot && !findRepeat) {
                     if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
                         if (process.env.NODE_ENV == 'development')
                             console.log('[router-storage]:additional go back');
