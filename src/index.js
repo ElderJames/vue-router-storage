@@ -121,14 +121,15 @@ RouterStorage.install = function (Vue, option) {
                 }
                 else {
 
-                    if (process.env.NODE_ENV == 'development')
-                        console.log('[router-storage]:router replace :' + vm.$route.fullPath)
-
                     _history.routes.pop();
                     _history.routes.push(vm.$route.fullPath);
 
-                    vm.$emit('history.replace')
                 }
+
+                if (process.env.NODE_ENV == 'development')
+                    console.log('[router-storage]:router replace :' + vm.$route.fullPath)
+
+                vm.$emit('history.replace')
             }
 
             let goForward = () => {
@@ -154,6 +155,7 @@ RouterStorage.install = function (Vue, option) {
                         console.warn('[router-storage]:It\'s root,can\'t back!')
                     _isRoot = true;
                     vm.$emit('history.inroot')
+
                     next(false);
                     _history.beforeState = { key: genKey() }
                     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
