@@ -88,28 +88,54 @@ RouterStorage.install = function (Vue, option) {
             var _routeActived = false;
             //用于标记是否已到达Vue根路径，到达就不再后退了
             var _isRoot = false;
+            //有重复的标记
+            var findRepeat = false;
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                if (process.env.NODE_ENV == 'development')
-                    console.log('[router-storage]:go back')
-                //后退
+                if (findRepeat)
+                    return;
+
                 if (_history.routes.length > 0)
                     _history.forwardRoutes.push(_history.routes.pop());
+
+                console.log(_history.forwardRoutes);
+
+                if (process.env.NODE_ENV == 'development')
+                    console.log('[router-storage]:go back')
 
                 vm.$emit('history.goback')
             }
 
             let replace = () => {
+                if (findRepeat)
+                    return;
+
+
+                //检查当前路径是否与上一个路径相同，相同则去重
+                if (vm.$route.fullPath == _history.routes[_history.routes.length - 2]) {
+                    findRepeat = true;
+                    history.go(-1);
+                    _history.routes.pop();
+                    findRepeat = false;
+                }
+                else {
+
+                    _history.routes.pop();
+                    _history.routes.push(vm.$route.fullPath);
+
+                }
+
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:router replace :' + vm.$route.fullPath)
-                _history.routes.pop();
-                _history.routes.push(vm.$route.fullPath);
 
                 vm.$emit('history.replace')
             }
 
             let goForward = () => {
+                if (findRepeat)
+                    return;
+
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go forward')
                 //前进
@@ -122,12 +148,14 @@ RouterStorage.install = function (Vue, option) {
             vm.$router.beforeEach((to, from, next) => {
                 _routeActived = true;
                 _isRoot = false;
+
                 //在Vue根目录再后退的处理
                 if (to.path == '/__root' && history.state && history.state.key === -1) {
                     if (process.env.NODE_ENV == 'development')
                         console.warn('[router-storage]:It\'s root,can\'t back!')
                     _isRoot = true;
                     vm.$emit('history.inroot')
+
                     next(false);
                     _history.beforeState = { key: genKey() }
                     for (var idx = _history.forwardRoutes.length - 1; idx >= 0; idx--) {
@@ -148,7 +176,7 @@ RouterStorage.install = function (Vue, option) {
                     }
                     else {
                         //replace处理
-                        if (_history.beforeState.key == history.state.key) {
+                        if (_history.beforeState && history.state && _history.beforeState.key == history.state.key) {
                             replace();
                         }
                         //普通前进处理
@@ -163,23 +191,25 @@ RouterStorage.install = function (Vue, option) {
 
             //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
             window.onpopstate = function (e) {
+
+                console.log('onpopstate', e)
+
                 //如果路由处理过，则不再执行
                 if (_routeActived) {
                     _routeActived = false;
                     return;
                 }
-                if (!_isRoot) {
-                    if (_history.beforeState && e.state) {
-                        if (Number(_history.beforeState.key) > Number(e.state.key)) {
-                            if (process.env.NODE_ENV == 'development')
-                                console.log('[router-storage]:additional go back');
-                            goBack();
-                        }
-                        else if (Number(_history.beforeState.key) != Number(e.state.key)) {
-                            if (process.env.NODE_ENV == 'development')
-                                console.log('[router-storage]:additional go forward');
-                            goForward();
-                        }
+
+                if (!_isRoot && !findRepeat) {
+                    if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
+                        if (process.env.NODE_ENV == 'development')
+                            console.log('[router-storage]:additional go back');
+                        goBack();
+                    }
+                    else if (Number(_history.beforeState.key) != Number(e.state.key)) {
+                        if (process.env.NODE_ENV == 'development')
+                            console.log('[router-storage]:additional go forward');
+                        goForward();
                     }
                     _history.beforeState = history.state;
                     localStorage.Save()
@@ -187,9 +217,9 @@ RouterStorage.install = function (Vue, option) {
             }
 
             //路由调用完后初始化_routeActived
-            vm.$router.afterEach(route => {
-                _routeActived = false;
-            })
+            // vm.$router.afterEach(route => {
+            //     _routeActived = false;
+            // })
         }
     })
 
