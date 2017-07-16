@@ -104,7 +104,7 @@ RouterStorage.install = function (Vue, option) {
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go back')
 
-                vm.$emit('history.goback')
+                vm.$emit('router.goback')
             }
 
             let replace = () => {
@@ -129,7 +129,7 @@ RouterStorage.install = function (Vue, option) {
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:router replace :' + vm.$route.fullPath)
 
-                vm.$emit('history.replace')
+                vm.$emit('router.replace')
             }
 
             let goForward = () => {
@@ -142,7 +142,7 @@ RouterStorage.install = function (Vue, option) {
                 _history.routes.push(vm.$route.fullPath);
                 _history.forwardRoutes = [];
 
-                vm.$emit('history.goforward')
+                vm.$emit('router.goforward')
             }
 
             vm.$router.beforeEach((to, from, next) => {
@@ -154,7 +154,7 @@ RouterStorage.install = function (Vue, option) {
                     if (process.env.NODE_ENV == 'development')
                         console.warn('[router-storage]:It\'s root,can\'t back!')
                     _isRoot = true;
-                    vm.$emit('history.inroot')
+                    vm.$emit('router.inroot')
 
                     next(false);
                     _history.beforeState = { key: genKey() }
