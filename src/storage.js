@@ -4,7 +4,7 @@ let _localStorage = localStorage;
 if (typeof _localStorage == 'undefined') {
     if (process.env.NODE_ENV == 'development')
         console.info('[router-storage]:because your browser dosen\'t surpport localstorage,router-storage will use cookie right here.')
-    //创建localStorage
+    //用cookie实现localStorage
     var localStorageClass = function () {
         this.options = {
             expires: 60 * 24 * 3600,
