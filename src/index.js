@@ -88,14 +88,9 @@ RouterStorage.install = function (Vue, option) {
             var _routeActived = false;
             //用于标记是否已到达Vue根路径，到达就不再后退了
             var _isRoot = false;
-            //有重复的标记
-            var findRepeat = false;
 
             /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
             let goBack = () => {
-                if (findRepeat)
-                    return;
-
                 if (_history.routes.length > 0)
                     _history.forwardRoutes.push(_history.routes.pop());
 
@@ -107,23 +102,15 @@ RouterStorage.install = function (Vue, option) {
                 vm.$emit('router.goback')
             }
 
-            let replace = () => {
-                if (findRepeat)
-                    return;
-
-
+            let replace = (next) => {
                 //检查当前路径是否与上一个路径相同，相同则去重
                 if (vm.$route.fullPath == _history.routes[_history.routes.length - 2]) {
-                    findRepeat = true;
-                    history.go(-1);
+                    next(false);
                     _history.routes.pop();
-                    findRepeat = false;
                 }
                 else {
-
                     _history.routes.pop();
                     _history.routes.push(vm.$route.fullPath);
-
                 }
 
                 if (process.env.NODE_ENV == 'development')
@@ -133,9 +120,6 @@ RouterStorage.install = function (Vue, option) {
             }
 
             let goForward = () => {
-                if (findRepeat)
-                    return;
-
                 if (process.env.NODE_ENV == 'development')
                     console.log('[router-storage]:go forward')
                 //前进
@@ -177,7 +161,7 @@ RouterStorage.install = function (Vue, option) {
                     else {
                         //replace处理
                         if (_history.beforeState && history.state && _history.beforeState.key == history.state.key) {
-                            replace();
+                            replace(next);
                         }
                         //普通前进处理
                         else {
@@ -215,11 +199,6 @@ RouterStorage.install = function (Vue, option) {
                     localStorage.Save()
                 }
             }
-
-            //路由调用完后初始化_routeActived
-            // vm.$router.afterEach(route => {
-            //     _routeActived = false;
-            // })
         }
     })
 

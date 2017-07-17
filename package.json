@@ -1,6 +1,6 @@
 {
   "name": "vue-router-storage",
-  "version": "1.0.0-rc.4.6",
+  "version": "1.0.1",
   "description": "Router storage & resolve solution for Vue.js 2 & vue-router 2",
   "author": "James Yeang <shunjiey@hotmail.com>",
   "license": "MIT",
@@ -56,8 +56,8 @@
     "ora": "^1.1.0",
     "rimraf": "^2.6.0",
     "url-loader": "^0.5.7",
-    "vue": "^2.2.2",
-    "vue-router": "^2.2.0",
+    "vue": "^2.4.1",
+    "vue-router": "^2.7.0",
     "vue-loader": "^11.1.4",
     "vue-style-loader": "^2.0.0",
     "vue-template-compiler": "^2.2.4",
