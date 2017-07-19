@@ -1,5 +1,4 @@
-﻿
-let _localStorage = localStorage;
+﻿let _localStorage = localStorage;
 //检测浏览器是否支持localStorage
 if (typeof _localStorage == 'undefined') {
     if (process.env.NODE_ENV == 'development')
@@ -71,10 +70,11 @@ if (typeof _localStorage == 'undefined') {
 import { _history } from './history'
 
 export default {
+    showLog: false,
     Save() {
         _localStorage.setItem('history', JSON.stringify(_history.routes))
         var result = _localStorage.getItem('history') != null;
-        if (result && process.env.NODE_ENV == 'development')
+        if (result && this.showLog)
             console.log('[router-storage]:save routes by localStorage');
         return result;
     },
@@ -82,7 +82,7 @@ export default {
         if (_localStorage.getItem('history'))
             _history.routes = JSON.parse(_localStorage.getItem('history'));
         var result = _history.routes.length > 0;
-        if (result && process.env.NODE_ENV == 'development')
+        if (result && this.showLog)
             console.log('[router-storage]:resolve routes from localStorage');
         return result;
     },
@@ -90,7 +90,7 @@ export default {
         _localStorage.removeItem('history')
         _history.routes = []
         var result = _localStorage.getItem('history') && _history.routes.length == 0;
-        if (result && process.env.NODE_ENV == 'development')
+        if (result && this.showLog)
             console.log('[router-storage]:clear routes from localStorage');
         return result;
     }

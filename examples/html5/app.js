@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import RouterStorage from 'vue-router-storage'
 
 Vue.use(Router)
-Vue.use(RouterStorage)
+Vue.use(RouterStorage, { showLog: true, stayHere: true })
 
 Vue.config.productionTip = false
 
