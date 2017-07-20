@@ -5,7 +5,7 @@
 
 > A solution to the Vue history routing Persistence. 
 
-[中文文档](https://github.com/zack24q/vue-router-storage/blob/master/README_CN.md)
+[中文文档](https://github.com/ElderJames/vue-router-storage/blob/master/README_CN.md)
 
 ##### Current function
 

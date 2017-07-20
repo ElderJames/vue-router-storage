@@ -5,7 +5,7 @@
 
 > 一个vue历史路由持久化的解决方案。
 
-[English](https://github.com/zack24q/vue-router-storage/blob/master/README.md)
+[English](https://github.com/ElderJames/vue-router-storage/blob/master/README.md)
 
 ##### 目前功能
 
