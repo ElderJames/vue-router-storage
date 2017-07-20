@@ -1,25 +1,27 @@
-# vue-history-storage
+# vue-router-storage
 
-### What
+> A solution to the Vue history routing Persistence. 
 
-> 一个vue历史路由持久化的解决方案。
+[中文文档](https://github.com/zack24q/vue-router-storage/blob/master/README_CN.md)
 
-##### 目前功能
+##### Current function
 
-1. 持久化用户浏览记录，并在重新进入vue应用时自动恢复原来的路径。
-2. 进入vue应用没有历史记录时，自动创建前置历史记录，使应用可以“返回”到上一级页面。
-3. 当路由到达根目录时，防止继续后退（因为原来是从其他网站跳转到这个vue应用）而退出vue作用范围。
-4. 路由变更时触发前进（router.goforward）、后退（router.goback）、覆盖（router.replace）、到达根目录（router.inroot）事件。
+1. Persistent user browsing records, and automatically restores the original path when you re-enter the Vue application.
+2. When you enter the Vue application without history, the predecessor history is automatically created so that the application can 'return' to the previous page.
+3. When the route arrives at the root directory, prevent it from continuing to retreat (because it originally jumped from another site to this Vue application) and quit the Vue scope.
+4. The routing change triggers the advance (router. GoForward), back (router. GoBack), overwrite (router. Replace), and reach the root directory (router. inroot) events.
+
+*If your vue application needs to jump to a third party page, and then jump back, want to restore to the original history and continue to operate, the use of this plug-in is the best solution.*
 
 ### Why
 
-Vue中使用HTML5 history历史模式时，能通过浏览器进行前进后退操作。但是，当在地址栏直接填写多级路由地址或者从外部链接跳转到Vue应用的多级路由时，会造成历史记录丢失、无法回退上级页面的尴尬情况。本方案则为vue提供历史记录重构和持久化的功能，解决历史记录丢失和无法回退的问题。
+Vue in the use of HTML5 history mode, through the browser for forward and backward operations. However, when the multi-level routing address directly in the address bar or jump from the external link to the Vue application multi-level routing, it will cause the history is lost, can not return to the embarrassing situation of the parent page. This program provides vue with historical refactoring and persistence capabilities to address the loss of historical records and the inability to roll back.
 
-如果你的vue应用需要跳转到第三方页面，再跳转回来时，想恢复到原来的历史记录并继续操作，使用本插件是最好的解决方案。
+
 
 ### How
 
-基于localStorage/cookie存储，在Vue实例创建时，先检查本地是否保存这以前的历史记录，如果没有，则把路由路径保存下来，同时通过history.pushState方法，把路由匹配路径注入到浏览器的历史记录中，使浏览器获得回退到上级路由；如果有保存历史记录，则将历史记录注入到浏览器中，使用户重新打开网页时能继续上次的操作。
+Based on the localStorage / cookie store, when the Vue instance is created, check whether the local history is saved or not. If not, save the route path and inject the route matching path into the browser history through the history.pushState method Record, the browser to get back to the higher-level routing; if you have saved history, the history will be injected into the browser, so that users can reopen the page to continue the last operation.
 
 ### Screenshot
 
@@ -27,13 +29,13 @@ Vue中使用HTML5 history历史模式时，能通过浏览器进行前进后退�
 
 ## Use Setup
 
-1. 命令行执行npm安装包
+1. The command line executes the npm installation package
 ``` bash
 # install vue-router-storage package
 npm install --save vue-router-storage
 
 ```
-2. 在入口文件加入以下代码
+2. Add the following code to the entry file
 ```javascript
 import Vue from 'vue'
 import RouterStorage from 'vue-router-storage'
@@ -41,7 +43,7 @@ import RouterStorage from 'vue-router-storage'
 Vue.use(RouterStorage);
 ```
 
-3. 在webpack中加入以下配置
+3. Add the following configuration to webpack
 ```javascript
     resolve: {
         ...
@@ -51,7 +53,7 @@ Vue.use(RouterStorage);
     },
 ```
 
-尽情享用吧！
+Enjoy it!
 
 ## Build Setup
 
