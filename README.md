@@ -1,5 +1,8 @@
 # vue-router-storage
 
+[![npm](https://img.shields.io/npm/v/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
+[![npm](https://img.shields.io/npm/dm/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
+
 > A solution to the Vue history routing Persistence. 
 
 [中文文档](https://github.com/zack24q/vue-router-storage/blob/master/README_CN.md)
