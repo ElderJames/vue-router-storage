@@ -32,6 +32,7 @@ export default {
         Vue.mixin({
             created() {
                 var vm = this.$root;
+                _history.$root = this.$root;
 
                 if (_history.enterPath != '') return;
 
