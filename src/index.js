@@ -179,7 +179,7 @@ export default {
                         return;
                     }
 
-                    if (!_isRoot && !findRepeat) {
+                    if (!_isRoot) {
                         if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
                             if (showLog)
                                 console.log('[router-storage]:additional go back');
