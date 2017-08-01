@@ -2,12 +2,13 @@
 
 [![npm](https://img.shields.io/npm/v/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
 [![npm](https://img.shields.io/npm/dm/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ElderJames/vue-router-storage/blob/master/LICENSE)  
 
 > 一个vue历史路由持久化的解决方案。
 
 [English](https://github.com/ElderJames/vue-router-storage/blob/master/README.md)
 
-##### 目前功能
+### 目前功能
 
 1. 持久化用户浏览记录，并在重新进入vue应用时自动恢复原来的路径。
 2. 进入vue应用没有历史记录时，自动创建前置历史记录，使应用可以“返回”到上一级页面。
@@ -43,7 +44,8 @@ npm install --save vue-router-storage
 import Vue from 'vue'
 import RouterStorage from 'vue-router-storage'
 
-Vue.use(RouterStorage);
+//showLog:打印内部日志（默认:false） stayHere:限制不退出vue应用(默认true)
+Vue.use(RouterStorage, { showLog: false, stayHere: true });
 ```
 
 3. 在webpack中加入以下配置
@@ -54,6 +56,48 @@ Vue.use(RouterStorage);
             'vue-router-storage': 'vue-router-storage/dist/vue-router-storage.esm.js',
         }
     },
+```
+
+4. 使用方法
+
+使用以上配置后，即刻产生作用，以下为其他方法和事件
+
+```javascript
+
+//获取本插件的history实例
+this.$history;
+
+//清除历史记录
+this.$history.clear();
+
+//监听后退事件
+vm.$on('router.goback', function () {
+  console.log('goback event')
+})
+
+//监听覆盖事件
+vm.$on('router.replace', function () {
+  console.log('replace event')
+})
+
+//监听前进事件
+vm.$on('router.goforward', function () {
+  console.log('goforward event')
+})
+
+//监听尝试离开事件（stayHere为true时才触发）
+vm.$on('router.inroot', function () {
+  console.log('inroot event')
+})
+
+//在组件中监听路径变化并获取路径列表
+
+ watch: {
+        '$history.routes'(val) {
+            ///this.path = val;
+        }
+    }
+
 ```
 
 尽情享用吧！

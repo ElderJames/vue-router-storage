@@ -2,17 +2,18 @@
 
 [![npm](https://img.shields.io/npm/v/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
 [![npm](https://img.shields.io/npm/dm/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ElderJames/vue-router-storage/blob/master/LICENSE)  
 
 > A solution to the Vue history routing Persistence. 
 
 [中文文档](https://github.com/ElderJames/vue-router-storage/blob/master/README_CN.md)
 
-##### Current function
+### Current function
 
 1. Persistent user browsing records, and automatically restores the original path when you re-enter the Vue application.
 2. When you enter the Vue application without history, the predecessor history is automatically created so that the application can 'return' to the previous page.
 3. When the route arrives at the root directory, prevent it from continuing to retreat (because it originally jumped from another site to this Vue application) and quit the Vue scope.
-4. The routing change triggers the advance (router. GoForward), back (router. GoBack), overwrite (router. Replace), and reach the root directory (router. inroot) events.
+4. The routing change triggers the advance (router.goforward), back (router.goback), overwrite (router.replace), and reach the root directory (router.inroot) events.
 
 *If your vue application needs to jump to a third party page, and then jump back, want to restore to the original history and continue to operate, the use of this plug-in is the best solution.*
 
@@ -43,7 +44,8 @@ npm install --save vue-router-storage
 import Vue from 'vue'
 import RouterStorage from 'vue-router-storage'
 
-Vue.use(RouterStorage);
+//showLog: Print Internal log (default: false) stayHere: Limit not to exit Vue application (default true)
+Vue.use(RouterStorage, { showLog: false, stayHere: true });
 ```
 
 3. Add the following configuration to webpack
@@ -54,6 +56,47 @@ Vue.use(RouterStorage);
             'vue-router-storage': 'vue-router-storage/dist/vue-router-storage.esm.js',
         }
     },
+```
+
+4. How to use
+
+After using the above configuration, immediately produces the effect, the following is the other method and the event
+
+```javascript
+
+//Get the history instance of this plugin
+this.$history;
+
+//Clear history
+this.$history.clear();
+
+//Listening for back events
+vm.$on('router.goback', function () {
+  console.log('goback event')
+})
+
+//Listening for replace events
+vm.$on('router.replace', function () {
+  console.log('replace event')
+})
+
+//Listening for forward events
+vm.$on('router.goforward', function () {
+  console.log('goforward event')
+})
+
+//Listening for trying leave vue app events(Triggered when Stayhere is true)
+vm.$on('router.inroot', function () {
+  console.log('inroot event')
+})
+
+//Listen for path changes in the component and get a list of paths
+ watch: {
+        '$history.routes'(val) {
+            ///this.path = val;
+        }
+    }
+
 ```
 
 Enjoy it!

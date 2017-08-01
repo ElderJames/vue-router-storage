@@ -20,9 +20,7 @@ const App = {
   `,
   methods: {
     clearStore() {
-      localStorage.removeItem('history');
-      this.$history.routes.splice(0, this.$history.routes.length);
-
+      this.$history.clear();
     }
   }
 }
