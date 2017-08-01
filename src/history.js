@@ -4,7 +4,8 @@ export let _history = {
     enterPath: '',
     base: '',
     beforeState: 0,
-    length: 0
+    length: 0,
+    lastKey: ''
 }
 
 export default {}
