@@ -12,7 +12,7 @@ const version = process.env.VERSION || require('../package.json').version
 const banner =
   `/**
   * vue-router-storage v${version}
-  * (c) ${new Date().getFullYear()} James Yeang
+  * (c) ${new Date().getFullYear()} James Yeung
   * @license MIT
   */`
 
