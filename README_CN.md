@@ -1,8 +1,9 @@
 # vue-router-storage
 
-[![npm](https://img.shields.io/npm/v/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
-[![npm](https://img.shields.io/npm/dm/vue-router-storage.svg)](https://www.npmjs.com/package/vue-router-storage)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ElderJames/vue-router-storage/blob/master/LICENSE)  
+[![Version](https://img.shields.io/npm/v/vue-router-storage.svg?style=flat-square)](https://www.npmjs.com/package/vue-router-storage)
+[![Author](https://img.shields.io/badge/author-ElderJames-blue.svg?style=flat-square)](https://elderjames.github.io)
+[![Download](https://img.shields.io/npm/dm/vue-router-storage.svg?style=flat-square)](https://www.npmjs.com/package/vue-router-storage)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/ElderJames/vue-router-storage/blob/master/LICENSE)  
 
 > 一个vue历史路由持久化的解决方案。
 
