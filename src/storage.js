@@ -73,6 +73,7 @@ export default {
     showLog: false,
     Save() {
         _localStorage.setItem('history', JSON.stringify(_history.routes))
+        _localStorage.setItem('history.lastKey', history.state.key)
         var result = _localStorage.getItem('history') != null;
         if (result && this.showLog)
             console.log('[router-storage]:save routes by localStorage');
@@ -81,6 +82,8 @@ export default {
     Resolve() {
         if (_localStorage.getItem('history'))
             _history.routes = JSON.parse(_localStorage.getItem('history'));
+        if (_localStorage.getItem('history.lastKey'))
+            _history.lastKey = Number(_localStorage.getItem('history.lastKey'));
         var result = _history.routes.length > 0;
         if (result && this.showLog)
             console.log('[router-storage]:resolve routes from localStorage');
@@ -88,8 +91,10 @@ export default {
     },
     Clear() {
         _localStorage.removeItem('history')
+        _localStorage.removeItem('history.lastKey')
         _history.routes = []
-        var result = _localStorage.getItem('history') && _history.routes.length == 0;
+        _history.lastKey = '';
+        var result = !_localStorage.getItem('history') && !_localStorage.getItem('history.lastKey') && _history.routes.length == 0;
         if (result && this.showLog)
             console.log('[router-storage]:clear routes from localStorage');
         return result;

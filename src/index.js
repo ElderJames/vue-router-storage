@@ -52,38 +52,45 @@ export default {
                     localStorage.Clear();
                 }
 
-                //刷新时，在根路径前多加一个记录，防止退后时跳出Vue，无法再执行判断和禁止后退操作
-                if (history.length > 1 && stayHere) {
-                    history.replaceState({ key: -1 }, '', _history.base + '/__root');
-                    history.pushState({ key: genKey() }, '', _history.base + '/');
-                }
-                //有历史记录
-                if (_history.routes.length > 0) {
-                    for (var idx = 0; idx < _history.routes.length; idx++) {
-                        history.pushState({ key: genKey() }, '', _history.base + _history.routes[idx]);
-                    }
 
-                    //进来时的路径与保存的历史记录中的最后一个不相同,追加
-                    if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
-                        _history.routes.push(_history.enterPath);
-                        history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
-                    }
-                    localStorage.Save();
+                if (history.length > 0 && _history.routes.length > 0 && Number(_history.lastKey) == Number(history.state.key)) {
+                    vm.$emit('router.refresh')
+                    if (showLog) console.log('refreshed!');
                 }
-                else if (_history.enterPath !== '' && _history.enterPath !== '/') {
-                    if (showLog)
-                        console.log('[router-storage]:resolve routers from routeMatched')
-                    for (var idx = 0; idx < vm.$route.matched.length - 1; idx++) {
-                        var path = vm.$route.matched[idx].path;
-                        history.pushState({ key: genKey() }, '', _history.base + path);
-                        _history.routes.push(path);
+                else {
+                    //刷新时，在根路径前多加一个记录，防止退后时跳出Vue，无法再执行判断和禁止后退操作
+                    if (history.length > 1 && stayHere) {
+                        history.replaceState({ key: -1 }, '', _history.base + '/__root');
+                        history.pushState({ key: genKey() }, '', _history.base + '/');
                     }
-                    history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
-                    _history.routes.push(_history.enterPath);
-                    localStorage.Save();
+                    //有历史记录
+                    if (_history.routes.length > 0) {
+                        for (var idx = 0; idx < _history.routes.length; idx++) {
+                            history.pushState({ key: genKey() }, '', _history.base + _history.routes[idx]);
+                        }
+
+                        //进来时的路径与保存的历史记录中的最后一个不相同,追加
+                        if (_history.routes[_history.routes.length - 1] !== _history.enterPath) {
+                            _history.routes.push(_history.enterPath);
+                            history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
+                        }
+                    }
+                    else if (_history.enterPath !== '' && _history.enterPath !== '/') {
+                        if (showLog)
+                            console.log('[router-storage]:resolve routers from routeMatched')
+
+                        for (var idx = 0; idx < vm.$route.matched.length - 1; idx++) {
+                            var path = vm.$route.matched[idx].path;
+                            history.pushState({ key: genKey() }, '', _history.base + path);
+                            _history.routes.push(path);
+                        }
+                        history.pushState({ key: genKey() }, '', _history.base + _history.enterPath);
+                        _history.routes.push(_history.enterPath);
+                    }
                 }
                 _history.beforeState = history.state;
-                _history.length = history.length;
+                _history.lastKey = history.state.lastKey;
+                localStorage.Save();
 
                 //用于标记是否已经被路由处理过，路由处理过popstate事件就不再处理了
                 var _routeActived = false;
@@ -94,6 +101,7 @@ export default {
                 let goBack = () => {
                     if (_history.routes.length > 0)
                         _history.forwardRoutes.push(_history.routes.pop());
+                    localStorage.Save();
 
                     if (showLog)
                         console.log('[router-storage]:go back')
@@ -111,7 +119,7 @@ export default {
                         _history.routes.pop();
                         _history.routes.push(vm.$route.fullPath);
                     }
-
+                    localStorage.Save();
                     if (showLog)
                         console.log('[router-storage]:router replace :' + vm.$route.fullPath)
 
@@ -119,11 +127,13 @@ export default {
                 }
 
                 let goForward = () => {
-                    if (showLog)
-                        console.log('[router-storage]:go forward')
                     //前进
                     _history.routes.push(vm.$route.fullPath);
                     _history.forwardRoutes = [];
+
+                    localStorage.Save();
+                    if (showLog)
+                        console.log('[router-storage]:go forward')
                     vm.$emit('router.goforward')
                 }
 
@@ -167,8 +177,8 @@ export default {
                             }
                         }
                         _history.beforeState = history.state;
-                        localStorage.Save()
                     }
+                    localStorage.Save()
                 })
 
                 //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
