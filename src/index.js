@@ -1,4 +1,3 @@
-import Path from './history-path'
 import localStorage from './storage'
 import { _history } from './history'
 
@@ -206,8 +205,6 @@ export default {
                 }
             }
         })
-
-        Vue.component('history-path', Path)
     }
 }
 if (window.Vue) {

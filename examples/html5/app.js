@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import RouterStorage from 'vue-router-storage'
+import Path from '../history-path'
 
 Vue.use(Router)
 Vue.use(RouterStorage, { showLog: true, stayHere: true })
+Vue.component('history-path', Path)
 
 Vue.config.productionTip = false
 

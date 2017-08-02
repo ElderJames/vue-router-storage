@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import RouterStorage from 'vue-router-storage'
+import Path from '../history-path'
 
 Vue.use(Router)
 Vue.use(RouterStorage)
 
 Vue.config.productionTip = false
+
+Vue.component('history-path', Path)
 
 const App = {
   name: 'App',
