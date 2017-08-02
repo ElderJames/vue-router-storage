@@ -9,6 +9,8 @@
 
 [English](https://github.com/ElderJames/vue-router-storage/blob/master/README.md)
 
+## 注意：目前版本只支持history模式！
+
 ### 目前功能
 
 1. 持久化用户浏览记录，并在重新进入vue应用时自动恢复原来的路径。
@@ -21,8 +23,6 @@
 ### Why
 
 Vue中使用HTML5 history历史模式时，能通过浏览器进行前进后退操作。但是，当在地址栏直接填写多级路由地址或者从外部链接跳转到Vue应用的多级路由时，会造成历史记录丢失、无法回退上级页面的尴尬情况。本方案则为vue提供历史记录重构和持久化的功能，解决历史记录丢失和无法回退的问题。
-
-
 
 ### How
 

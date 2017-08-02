@@ -9,6 +9,8 @@
 
 [中文文档](https://github.com/ElderJames/vue-router-storage/blob/master/README_CN.md)
 
+## Warn：Current Version Just Support The History Mode!
+
 ### Current function
 
 1. Persistent user browsing records, and automatically restores the original path when you re-enter the Vue application.
@@ -21,8 +23,6 @@
 ### Why
 
 Vue in the use of HTML5 history mode, through the browser for forward and backward operations. However, when the multi-level routing address directly in the address bar or jump from the external link to the Vue application multi-level routing, it will cause the history is lost, can not return to the embarrassing situation of the parent page. This program provides vue with historical refactoring and persistence capabilities to address the loss of historical records and the inability to roll back.
-
-
 
 ### How
 
