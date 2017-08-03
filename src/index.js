@@ -114,6 +114,14 @@ export default {
                         next(false);
                         _history.routes.pop();
                     }
+                    else if (_history.routes.some(x => x == vm.$route.fullPath)) {
+                        var index = _history.routes.indexOf(vm.$route.fullPath);
+                        console.log(index);
+                        for (var i = _history.routes.length-1; i > index; i--) {
+                            next(false);
+                            _history.routes.pop();
+                        }
+                    }
                     else {
                         _history.routes.pop();
                         _history.routes.push(vm.$route.fullPath);
@@ -143,7 +151,7 @@ export default {
                     //在Vue根目录再后退的处理
                     if (to.path == '/__root' && history.state && history.state.key === -1) {
                         if (showLog)
-                            console.warn('[router-storage]:It\'s root,can\'t back!')
+                            console.warn('[router-storage]:Here is root,can\'t go back!')
                         _isRoot = true;
                         vm.$emit('router.inroot')
 

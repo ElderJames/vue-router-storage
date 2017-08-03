@@ -7,6 +7,25 @@ Vue.use(Router)
 Vue.use(RouterStorage, { showLog: true, stayHere: true })
 Vue.component('history-path', Path)
 
+
+const link = {
+  name: 'v-link',
+  template: '<router-link :to="url" replace>Replace To {{url}}</router-link>',
+  data() {
+    return {
+      url: this.$history.routes.length > 3 ? this.$history.routes[this.$history.routes.length - 3] : '/'
+    }
+  },
+  watch: {
+    '$history.routes'(val) {
+      console.log(val)
+      this.url = val.length > 3 ? val[val.length - 3] : '/';
+    }
+  }
+}
+
+Vue.component('v-link', link)
+
 Vue.config.productionTip = false
 
 const App = {
@@ -43,15 +62,19 @@ const Level3 = {
 }
 
 const comp1 = {
-  template: '<div><h1>comp1</h1><router-link to="/level2/level3/comp2">To Comp2</router-link><br/><router-link to="/level2/level3/comp2" replace>Replace To Comp2</router-link></div>'
+  template: '<div><h1>comp1</h1><router-link to="/level2/level3/comp2">To Comp2</router-link><br/><router-link to="/level2/level3/comp2" replace>Replace To Comp2</router-link><br /><v-link></v-link></div>',
 }
 
 const comp2 = {
-  template: '<div><h1>comp2</h1><router-link to="/level2/level3/comp3">To Comp3</router-link><br/><router-link to="/level2/level3/comp3" replace>Replace To Comp3</router-link></div>'
+  template: '<div><h1>comp2</h1><router-link to="/level2/level3/comp3">To Comp3</router-link><br/><router-link to="/level2/level3/comp3" replace>Replace To Comp3</router-link><br /><v-link></v-link></div>',
 }
 
 const comp3 = {
-  template: '<div><h1>comp3</h1><router-link to="/level2/level3/comp2">To Comp2</router-link><br/><router-link to="/level2/level3/comp2" replace>Replace To Comp2</router-link></div>'
+  template: '<div><h1>comp3</h1><router-link to="/level2/level3/comp4">To Comp4</router-link><br/><router-link to="/level2/level3/comp4" replace>Replace To Comp4</router-link><br /><v-link></v-link></div>',
+}
+
+const comp4 = {
+  template: '<div><h1>comp4</h1><router-link to="/level2/level3/comp2">To Comp2</router-link><br/><router-link to="/level2/level3/comp3" replace>Replace To Comp3</router-link><br /><v-link></v-link></div>',
 }
 
 const router = new Router({
@@ -85,6 +108,10 @@ const router = new Router({
             {
               path: 'comp3',
               component: comp3,
+            },
+            {
+              path: 'comp4',
+              component: comp4
             }
           ]
         }
