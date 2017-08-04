@@ -13,7 +13,7 @@
 
 ### Current function
 
-1. Persistent user browsing records, and automatically restores the original path when you re-enter the Vue application.
+1. Persistent user browsing records, and automatically restores the original path when you re-enter(not refresh) the Vue application.
 2. When you enter the Vue application without history, the predecessor history is automatically created so that the application can 'return' to the previous page.
 3. When the route arrives at the root directory, prevent it from continuing to retreat (because it originally jumped from another site to this Vue application) and quit the Vue scope.
 4. The routing change triggers the advance (router.goforward), back (router.goback), overwrite (router.replace), and reach the root directory (router.inroot) events.
