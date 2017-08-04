@@ -96,8 +96,12 @@ export default {
                 //用于标记是否已到达Vue根路径，到达就不再后退了
                 var _isRoot = false;
 
+                var _replacing = false;
+
                 /*下面三个方法一定是要在Vue路由改变（即调用了next()）之后调用，因为下面的 vm.$route.fullPath 对应to.fullPath*/
                 let goBack = () => {
+                    if (_replacing) return;
+
                     if (_history.routes.length > 0)
                         _history.forwardRoutes.push(_history.routes.pop());
                     localStorage.Save();
@@ -108,6 +112,7 @@ export default {
                     vm.$emit('router.goback')
                 }
 
+
                 let replace = (next) => {
                     //检查当前路径是否与上一个路径相同，相同则去重
                     if (vm.$route.fullPath == _history.routes[_history.routes.length - 2]) {
@@ -115,12 +120,13 @@ export default {
                         _history.routes.pop();
                     }
                     else if (_history.routes.some(x => x == vm.$route.fullPath)) {
+                        _replacing = true;
                         var index = _history.routes.indexOf(vm.$route.fullPath);
-                        console.log(index);
-                        for (var i = _history.routes.length-1; i > index; i--) {
-                            next(false);
+                        history.go(_history.routes.length - index)
+                        for (var i = _history.routes.length - 1; i > index; i--) {
                             _history.routes.pop();
                         }
+                        _replacing = false;
                     }
                     else {
                         _history.routes.pop();
@@ -134,6 +140,7 @@ export default {
                 }
 
                 let goForward = () => {
+                    if (_replacing) return;
                     //前进
                     _history.routes.push(vm.$route.fullPath);
                     _history.forwardRoutes = [];
@@ -147,6 +154,7 @@ export default {
                 vm.$router.beforeEach((to, from, next) => {
                     _routeActived = true;
                     _isRoot = false;
+                    if (_replacing) return;
 
                     //在Vue根目录再后退的处理
                     if (to.path == '/__root' && history.state && history.state.key === -1) {
@@ -190,6 +198,8 @@ export default {
 
                 //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
                 window.onpopstate = function (e) {
+                    if (_replacing) return;
+
                     //如果路由处理过，则不再执行
                     if (_routeActived) {
                         _routeActived = false;
