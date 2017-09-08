@@ -10,7 +10,7 @@ function genKey() {
 }
 
 export default {
-    install: (Vue, { showLog = false, stayHere = true, moduleName = 'vue-router-storage' } = {}) => {
+    install: function (Vue, { showLog = false, stayHere = true, moduleName = 'vue-router-storage' } = {}) {
 
         showLog = showLog && process.env.NODE_ENV == 'development';
         localStorage.showLog = showLog;
@@ -197,7 +197,7 @@ export default {
                 })
 
                 //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
-                window.onpopstate = function (e) {
+                window.onpopstate = (e) => {
                     if (_replacing) return;
 
                     //如果路由处理过，则不再执行
