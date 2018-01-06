@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/ElderJames/vue-router-storage.git"
   },
+  "main": "dist/vue-router-storage.esm.js",
   "files": [
     "src",
     "dist/*.js",
