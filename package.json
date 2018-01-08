@@ -1,6 +1,6 @@
 {
   "name": "vue-router-storage",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Router storage & resolve solution for Vue.js 2 & vue-router 2",
   "author": "James Yeung <shunjiey@hotmail.com>",
   "license": "MIT",
@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/ElderJames/vue-router-storage.git"
   },
+  "main": "dist/vue-router-storage.esm.js",
   "files": [
     "src",
     "dist/*.js",

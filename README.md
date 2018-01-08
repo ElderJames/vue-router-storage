@@ -3,9 +3,9 @@
 [![Version](https://img.shields.io/npm/v/vue-router-storage.svg?style=flat-square)](https://www.npmjs.com/package/vue-router-storage)
 [![Author](https://img.shields.io/badge/author-ElderJames-blue.svg?style=flat-square)](https://elderjames.github.io)
 [![Download](https://img.shields.io/npm/dm/vue-router-storage.svg?style=flat-square)](https://www.npmjs.com/package/vue-router-storage)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/ElderJames/vue-router-storage/blob/master/LICENSE)  
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/ElderJames/vue-router-storage/blob/master/LICENSE)
 
-> A solution to the Vue history routing Persistence. 
+> A solution to the Vue history routing Persistence.
 
 [中文文档](https://github.com/ElderJames/vue-router-storage/blob/master/README_CN.md)
 
@@ -49,17 +49,7 @@ import RouterStorage from 'vue-router-storage'
 Vue.use(RouterStorage, { showLog: false, stayHere: true });
 ```
 
-3. Add the following configuration to webpack
-```javascript
-    resolve: {
-        ...
-        alias: {
-            'vue-router-storage': 'vue-router-storage/dist/vue-router-storage.esm.js',
-        }
-    },
-```
-
-4. How to use
+3. How to use
 
 After using the above configuration, immediately produces the effect, the following is the other method and the event
 
