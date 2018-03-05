@@ -46,7 +46,8 @@ import Vue from 'vue'
 import RouterStorage from 'vue-router-storage'
 
 //showLog: Print Internal log (default: false) stayHere: Limit not to exit Vue application (default true)
-Vue.use(RouterStorage, { showLog: false, stayHere: true });
+//instanceName: the name of the history instance object,which can be change when get conflict whit other plugin
+Vue.use(RouterStorage, { showLog: false, stayHere: true , instanceName: '$history' });
 ```
 
 3. How to use

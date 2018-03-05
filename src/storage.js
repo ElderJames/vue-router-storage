@@ -67,7 +67,7 @@ if (typeof _localStorage == 'undefined') {
     _localStorage.init();
 }
 
-import { _history } from './history'
+import _history from './history'
 
 export default {
     showLog: false,

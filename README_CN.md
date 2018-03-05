@@ -45,21 +45,11 @@ npm install --save vue-router-storage
 import Vue from 'vue'
 import RouterStorage from 'vue-router-storage'
 
-//showLog:打印内部日志（默认:false） stayHere:限制不退出vue应用(默认true)
-Vue.use(RouterStorage, { showLog: false, stayHere: true });
+//showLog:打印内部日志（默认:false） stayHere:限制不退出vue应用(默认true) instanceName:实例名称，默认'$history'，当有其他插件冲突时可以修改
+Vue.use(RouterStorage, { showLog: false, stayHere: true , instanceName: '$history' });
 ```
 
-3. 在webpack中加入以下配置
-```javascript
-    resolve: {
-        ...
-        alias: {
-            'vue-router-storage': 'vue-router-storage/dist/vue-router-storage.esm.js',
-        }
-    },
-```
-
-4. 使用方法
+3. 使用方法
 
 使用以上配置后，即刻产生作用，以下为其他方法和事件
 

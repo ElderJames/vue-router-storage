@@ -1,6 +1,6 @@
 import localStorage from './storage'
 
-export let _history = {
+export default {
     routes: [],
     forwardRoutes: [],
     enterPath: '',
@@ -9,6 +9,7 @@ export let _history = {
     length: 0,
     lastKey: '',
     $root: null,
+
     clear() {
         this.routes.splice(0, this.routes.length);
         this.forwardRoutes.splice(0, this.forwardRoutes.length);
@@ -17,8 +18,4 @@ export let _history = {
         this.beforeState = 0;
         localStorage.Save();
     }
-}
-
-export default {
-
 }

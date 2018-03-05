@@ -10,7 +10,12 @@ function genKey() {
 }
 
 export default {
-    install: function (Vue, { showLog = false, stayHere = true, moduleName = 'vue-router-storage' } = {}) {
+    install: function (Vue, {
+        showLog = false,
+        stayHere = true,
+        moduleName = 'vue-router-storage',
+        instanceName = '$history'
+    } = {}) {
 
         showLog = showLog && process.env.NODE_ENV == 'development';
         localStorage.showLog = showLog;
@@ -24,7 +29,7 @@ export default {
 
         localStorage.Resolve()
 
-        Object.defineProperty(Vue.prototype, '$history', {
+        Object.defineProperty(Vue.prototype, instanceName, {
             get() { return _history }
         })
 
