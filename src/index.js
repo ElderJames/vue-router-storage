@@ -1,5 +1,5 @@
 import localStorage from './storage'
-import { _history } from './history'
+import _history from './history'
 
 const Time = window.performance && window.performance.now
     ? window.performance
