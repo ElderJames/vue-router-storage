@@ -93,7 +93,7 @@ export default {
                     }
                 }
                 _history.beforeState = history.state;
-                _history.lastKey = history.state.lastKey;
+                _history.lastKey = history.state.key;
                 localStorage.Save();
 
                 //用于标记是否已经被路由处理过，路由处理过popstate事件就不再处理了
