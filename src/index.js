@@ -1,5 +1,6 @@
 import localStorage from './storage'
 import _history from './history'
+import { Html5History } from './history'
 
 const Time = window.performance && window.performance.now
     ? window.performance
@@ -10,7 +11,7 @@ function genKey() {
 }
 
 export default {
-    install: function (Vue, {
+    install(Vue, {
         showLog = false,
         stayHere = true,
         moduleName = 'vue-router-storage',
@@ -193,20 +194,21 @@ export default {
                         return;
                     }
 
-                    if (!_isRoot) {
-                        if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
-                            if (showLog)
-                                console.log('[router-storage]:additional go back');
-                            goBack();
-                        }
-                        else if (Number(_history.beforeState.key) != Number(e.state.key)) {
-                            if (showLog)
-                                console.log('[router-storage]:additional go forward');
-                            goForward();
-                        }
-                        _history.beforeState = history.state;
-                        localStorage.Save()
+                    if (_isRoot) return;
+
+                    if (_history.beforeState && e.state && Number(_history.beforeState.key) > Number(e.state.key)) {
+                        if (showLog)
+                            console.log('[router-storage]:additional go back');
+                        goBack();
                     }
+                    else if (Number(_history.beforeState.key) != Number(e.state.key)) {
+                        if (showLog)
+                            console.log('[router-storage]:additional go forward');
+                        goForward();
+                    }
+                    _history.beforeState = history.state;
+                    localStorage.Save()
+
                 }
             }
         })
