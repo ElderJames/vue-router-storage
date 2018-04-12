@@ -187,7 +187,7 @@ export default {
                 })
 
                 //to和form的路由相同时，不会触发beforeEach，此时监听浏览器onpopstate事件进行补偿
-                window.onpopstate = (e) => {
+                window.addEventListener("popstate", function () {
                     //如果路由处理过，则不再执行
                     if (_routeActived) {
                         _routeActived = false;
@@ -209,7 +209,7 @@ export default {
                     _history.beforeState = history.state;
                     localStorage.Save()
 
-                }
+                });
             }
         })
     }
