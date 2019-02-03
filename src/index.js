@@ -48,7 +48,7 @@ export default {
                 }
 
                 //获取基路径            
-                _history.base = vm.$router.options.base ? '/' + vm.$router.options.base : '';
+                _history.base = vm.$router.options.base && vm.$router.options.base !== '/' ? '/' + /^\/?(.*?)\/?$/.exec(vm.$router.options.base)[1] : '';
                 //先获得访问vue页面时的路径
                 _history.enterPath = location.pathname.replace(_history.base, '') + location.search;
                 if (showLog)
